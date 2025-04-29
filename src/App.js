@@ -1,32 +1,35 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
 
+const API_BASE = "http://16.171.236.145:5000";
+
 function App() {
   const [question, setQuestion] = useState("");
-  const [sql, setSql]           = useState("");
-  const [results, setResults]   = useState([]);
-  const [error, setError]       = useState("");
+  const [sql, setSql] = useState("");
+  const [results, setResults] = useState([]);
+  const [error, setError] = useState("");
 
-  const [tables, setTables]               = useState([]);
+  const [tables, setTables] = useState([]);
   const [selectedTable, setSelectedTable] = useState("");
-  const [tableData, setTableData]         = useState({ columns: [], rows: [] });
-  const [tableError, setTableError]       = useState("");
+  const [tableData, setTableData] = useState({ columns: [], rows: [] });
+  const [tableError, setTableError] = useState("");
 
-  // Load table names on mount
   useEffect(() => {
-    fetch("/tables")
-      .then(res => res.json())
-      .then(data => {
+    fetch(`${API_BASE}/tables`)
+      .then((res) => res.json())
+      .then((data) => {
         if (data.tables) setTables(data.tables);
         else setTableError(data.error || "Failed to load tables");
       })
-      .catch(err => setTableError(err.message));
+      .catch((err) => setTableError(err.message));
   }, []);
 
   const handleAsk = async () => {
-    setError(""); setSql(""); setResults([]);
+    setError("");
+    setSql("");
+    setResults([]);
     try {
-      const res = await fetch("/query", {
+      const res = await fetch(`${API_BASE}/query`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question }),
@@ -47,7 +50,7 @@ function App() {
     setTableError("");
     if (!table) return;
     try {
-      const res = await fetch(`/tables/${table}`);
+      const res = await fetch(`${API_BASE}/tables/${table}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Server error");
       setTableData({ columns: data.columns, rows: data.rows });
@@ -88,8 +91,6 @@ function App() {
           color: #ffffff;
           text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-
-        /* First bubble: fixed width */
         .card {
           background: #ffffff;
           border-radius: 16px;
@@ -100,13 +101,10 @@ function App() {
           text-align: center;
           margin-bottom: 40px;
         }
-
-        /* Second bubble: flexible width */
         .browse-card {
           max-width: 90%;
           width: auto;
         }
-
         .section-title {
           margin-bottom: 16px;
           font-size: 1.5rem;
@@ -170,26 +168,26 @@ function App() {
 
       <div className="app-container">
         <div className="title">Text-to-SQL</div>
-        {/* fixed-width bubble */}
         <div className="card">
           <input
             className="input"
             type="text"
             placeholder="Type your question…"
             value={question}
-            onChange={e => setQuestion(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && handleAsk()}
+            onChange={(e) => setQuestion(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleAsk()}
           />
-          <button className="button" onClick={handleAsk}>Ask</button>
+          <button className="button" onClick={handleAsk}>
+            Ask
+          </button>
           {error && <div className="error">{error}</div>}
           {sql && <pre className="sql">{sql}</pre>}
-
           {results.length > 0 && (
             <div className="table-container">
               <table>
                 <thead>
                   <tr>
-                    {Object.keys(results[0]).map(col => (
+                    {Object.keys(results[0]).map((col) => (
                       <th key={col}>{col}</th>
                     ))}
                   </tr>
@@ -209,7 +207,6 @@ function App() {
         </div>
 
         <div className="title">Browse Tables</div>
-        {/* flexible-width bubble */}
         <div className="card browse-card">
           <div className="section-title">Select a Table</div>
           {tableError && <div className="error">{tableError}</div>}
@@ -219,8 +216,10 @@ function App() {
             onChange={handleTableChange}
           >
             <option value="">-- Choose a table --</option>
-            {tables.map(t => (
-              <option key={t} value={t}>{t}</option>
+            {tables.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
             ))}
           </select>
 
@@ -229,7 +228,7 @@ function App() {
               <table>
                 <thead>
                   <tr>
-                    {tableData.columns.map(col => (
+                    {tableData.columns.map((col) => (
                       <th key={col}>{col}</th>
                     ))}
                   </tr>
@@ -237,7 +236,7 @@ function App() {
                 <tbody>
                   {tableData.rows.map((row, i) => (
                     <tr key={i}>
-                      {tableData.columns.map(col => (
+                      {tableData.columns.map((col) => (
                         <td key={col}>{String(row[col])}</td>
                       ))}
                     </tr>
