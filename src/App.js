@@ -1,7 +1,7 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
 
-const API_BASE = "http://16.171.236.145:5000";
+const API_BASE = "https://test038666.xyz";
 
 function App() {
   const [question, setQuestion] = useState("");
