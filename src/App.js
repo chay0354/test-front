@@ -8,6 +8,7 @@ function App() {
   const [sql, setSql] = useState("");
   const [results, setResults] = useState([]);
   const [error, setError] = useState("");
+  const [rating, setRating] = useState(0);
 
   const [tables, setTables] = useState([]);
   const [selectedTable, setSelectedTable] = useState("");
@@ -28,6 +29,7 @@ function App() {
     setError("");
     setSql("");
     setResults([]);
+    setRating(0);
     try {
       const res = await fetch(`${API_BASE}/query`, {
         method: "POST",
@@ -164,6 +166,21 @@ function App() {
         th {
           background: #f9fafb;
         }
+        .rating-section {
+          margin-top: 24px;
+          text-align: center;
+        }
+        .star {
+          font-size: 2rem;
+          cursor: pointer;
+          margin: 0 4px;
+        }
+        .filled {
+          color: #fbbf24;
+        }
+        .empty {
+          color: #e5e7eb;
+        }
       `}</style>
 
       <div className="app-container">
@@ -202,6 +219,22 @@ function App() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {/* Rating UI */}
+          {results.length > 0 && (
+            <div className="rating-section">
+              <div className="section-title">Rate this answer</div>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`star ${rating >= star ? "filled" : "empty"}`}
+                  onClick={() => setRating(star)}
+                >
+                  ★
+                </span>
+              ))}
             </div>
           )}
         </div>
