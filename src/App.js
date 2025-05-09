@@ -195,7 +195,7 @@ function App() {
             onKeyDown={(e) => e.key === "Enter" && handleAsk()}
           />
           <button className="button" onClick={handleAsk}>
-            Ask
+            DB was intentionally turned off by me, please contact me if you want to use the system, thanks!
           </button>
           {error && <div className="error">{error}</div>}
           {sql && <pre className="sql">{sql}</pre>}
